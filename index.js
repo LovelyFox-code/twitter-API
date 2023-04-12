@@ -8,21 +8,23 @@ app.use(express.json());
 app.use(cors());
 
 const token = process.env.BEARER_TOKEN;
-app.use("/", (req, res) => {
+app.get("/get-tweets", (req, res) => {
   (async () => {
-    res.send("Getting data...");
     (async () => {
       try {
         // Make request
+
         const response = await getRequest();
         console.log("RESPONSE", response, {
           depth: null,
         });
+        res.status(200).json({
+          data: response,
+        });
       } catch (e) {
+        console.log("error");
         console.log(e);
-        process.exit(-1);
       }
-      process.exit();
     })();
   })();
 });
@@ -31,8 +33,9 @@ const endpointUrl = "https://api.twitter.com/2/tweets/search/recent";
 
 async function getRequest() {
   const params = {
-    query: "from:twitterdev -is:retweet",
-    "tweet.fields": "author_id",
+    query: "from:SAEIMEDIA lang:en",
+    expansions: "attachments.media_keys",
+    "media.fields": "preview_image_url,url,width,alt_text",
   };
 
   const res = await needle("get", endpointUrl, params, {
@@ -52,5 +55,3 @@ async function getRequest() {
 app.listen(port, () => {
   console.log("listening on port", port);
 });
-
-module.exports = app;
