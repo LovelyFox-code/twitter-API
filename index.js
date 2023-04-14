@@ -40,7 +40,7 @@ app.get("/twitter-feed", (req, res) => {
           depth: null,
         });
         res.status(200).json({
-          data: response,
+          dataFeed: response,
         });
       } catch (e) {
         console.log("error");
@@ -75,11 +75,12 @@ const endpointUrlFeed = "https://api.twitter.com/2/users/176053912/tweets";
 async function getRequestFeed() {
   const params = {
     expansions: "author_id",
+    max_results: 7,
   };
 
   const res = await needle("get", endpointUrlFeed, params, {
     headers: {
-      "User-Agent": "v2RecentSearchJS",
+      "User-Agent": "v2UserTweetsJS",
       authorization: `Bearer ${token}`,
     },
   });
